@@ -1,0 +1,7 @@
+# Fichier de sauvegarde contenant les données des joueurs.
+# DOIT ÊTRE conservé en local mais ignoré par GitHub.
+sauvegarde.json
+
+# Fichiers temporaires générés par Python
+__pycache__/
+*.pyc

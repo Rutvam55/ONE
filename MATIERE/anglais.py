@@ -835,4 +835,3 @@ Anglais_voc = [
     Anglais_voc10_vie_metiers_voyages,
     Anglais_voc11
     ]
-

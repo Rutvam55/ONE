@@ -1,4 +1,4 @@
-# 🚀 ONE (Version 0.7.3)
+# 🚀 ONE (Version 0.7.4)
 
 ## L'outil d'apprentissage en terminal
 

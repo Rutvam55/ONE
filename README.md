@@ -9,9 +9,9 @@
 ## 📚 Matières Actuellement Disponibles :
 
 * **Math** (Exercices de base : addition, soustraction, etc.)
-* **Anglais** (Vocabulaire)
-* **Français** (Vocabulaire)
-* **Deutsch (Allemand)** (Caractéristiques des nouvelles courtes)
+* **Anglais** (Vocabulaire (plus tard la conjugaison))
+* **Français** (Vocabulaire (pas trop devloper))
+* **Deutsch (Allemand)** (Caractéristiques des petit histoir (plus tard le voc))
 * **ScNat (Sciences Naturelles)** (Tableau périodique des éléments)
 
 ##instruction

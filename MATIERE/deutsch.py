@@ -6,7 +6,7 @@ merkmale_von_Kurzgeschichten = [
     "offener Anfang",
     "wenig Ortwechsel",
     "wenig Erzählzeit",
-    "konflikt",
+    "Konflikt",
     "alltägliche Situation",
     "wenig Details"
 ]

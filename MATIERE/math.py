@@ -7,8 +7,8 @@ def opperateur(a, b, op):
     elif op == "*":
         return a * b
     elif op == "/":
-        c = b * a
-        return c / a, c
+        while b = 0:
+        return b * reponse_correct 
 
 def choisir_un_nombre(min, max):
     a = random.randint(min, max)
@@ -45,7 +45,7 @@ def math_base():
     elif choix == "division":
         op = "/"
         b, c = choisir_un_nombre(-12, 12)
-        reponse_correct, a = opperateur(c, b, op)
+        a = opperateur(b, reponse_correct)
         if a > 0:
             a = "+" + str(a)
         elif b > 0:

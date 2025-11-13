@@ -1,4 +1,4 @@
-# 🚀 ONE (Version 0.7.4)
+# 🚀 ONE (Version 0.7.2)
 
 ## L'outil d'apprentissage en terminal
 
@@ -41,3 +41,12 @@ python main.py
 
 ## Auteur
 * Rutvam55
+
+## historique et nouveauté
+### v0.8 (LUN 17/11/2025)
+* Paramètre (0.8.0)
+
+### v0.7 (LUN 10/11/2025)
+* Correction des erreurs (v0.7.2)
+* plus de vocabulaire en français (v0.7.1)
+* Math (v0.7.0)

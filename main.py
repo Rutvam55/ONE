@@ -12,7 +12,7 @@ def calcule_pourcentage(nombre, nombre_total):
 
 
 # bouton
-boutton_ScNa, boutton_ScNat_i_elementen_namen, boutton_ScNat_i_elementen_ordnungszahl = False
+boutton_ScNat, boutton_ScNat_i_elementen_namen, boutton_ScNat_i_elementen_ordnungszahl = False
 boutton_Français, boutton_Français_i_diffi = False
 boutton_Deutsch, boutton_Deutsch_i_merkmale_von_Kurzgeschichten, boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle = True
 boutton_Anglais, boutton_Anglais_i_voc_easy, boutton_Anglais_i_voc_impossible = False
@@ -50,7 +50,7 @@ while running:
         nom,
         joueur,
         v,
-        boutton_ScNa, boutton_ScNat_i_elementen_namen, boutton_ScNat_i_elementen_ordnungszahl,
+        boutton_ScNat,boutton_ScNat_i_elementen_namen, boutton_ScNat_i_elementen_ordnungszahl,
         boutton_Français, boutton_Français_i_diffi,
         boutton_Deutsch, boutton_Deutsch_i_merkmale_von_Kurzgeschichten, boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle,
         boutton_Anglais, boutton_Anglais_i_voc_easy, boutton_Anglais_i_voc_impossible,

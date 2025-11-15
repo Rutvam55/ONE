@@ -1,20 +1,6 @@
 import json
 import os
 
-def correction(reponse, reponse_correct, streak, xp, score):
-    if reponse == reponse_correct:
-        print("✅ Correct !")
-        score += 1
-        xp += 50
-        streak = True
-    elif reponse == "?":
-        print("reponse correct: ", reponse_correct)
-    else:
-        print(f"❌ Mauvais ! C’était {reponse_correct}")
-        xp -= 50
-        streak = False
-    return streak, xp, score
-
 def charger_sauvegarde():
     """Charge la sauvegarde si elle existe, sinon crée des données par défaut."""
     if os.path.exists("sauvegarde.json"):

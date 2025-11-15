@@ -1,48 +1,64 @@
 import random
 import os
 from itertools import islice
-from  funk import correction
 joueur = None
 def set_joueur(j):
     """Définir la variable globale joueur depuis main.py"""
     global joueur
     joueur = j
 
+def control(score, xp, streak, reponse, reponse_correct, max):
+    try:
+        if reponse == "?":
+            print("reponse correct: ", reponse_correct)
+        elif reponse == reponse_correct:
+            print("✅ Correct !")
+            score += 1
+            xp += 50
+            streak = True
+        else:
+            print(f"❌ Mauvais ! C’était {reponse_correct}")
+            xp -= 50
+            streak = False
+        return score, xp, streak
+    except:
+        while max != 0:
+            try:
+                reponse = int(reponse)
+                if reponse == "?":
+                    print("reponse correct: ", reponse_correct)
+                    break
+                elif reponse == reponse_correct:
+                    print("✅ Correct !")
+                    score += 1
+                    xp += 50
+                    streak = True
+                    max = 0
+                else:
+                    print(f"❌ Mauvais ! C’était {reponse_correct}")
+                    xp -= 50
+                    streak = False
+                    max = 0
+                return score, xp, streak
+            except:
+                print("=" * 40)
+        return score, xp, streak
+
 
 # Math
 from MATIERE.math import math_base
 def Math(i, ndq):
-    while True:
-        print(f"{ndq}) Math\nXP Math: {joueur["Math"]["xp_Math"]}; Level Math: {joueur["Math"]["Level_Math"]}; Exercise Math: {joueur["Math"]["parties_jouees_Math"]}")
-        print("-" * 40)
-        score = 0
-        xp = 0
-        streak = False
-        choix = random.choice(i)
-        if choix == "base":
-            question, reponse_correct = math_base()
-            reponse = input(question)
-        if reponse == "?":
-            print("reponse correct: ", reponse_correct)
-            streak = True
-            break
-        else:
-            try:
-                reponse = int(reponse)
-                if reponse == reponse_correct:
-                    print("✅ Correct !")
-                    score += 1
-                    xp += 25
-                    streak = True
-                    break
-                else:
-                    print(f"❌ Mauvais ! C’était {reponse_correct}")
-                    streak = False
-                    xp -= 25
-                    break
-            except:
-                print("=" * 40)
-                print("NON VALID")
+    print(f"{ndq}) Math\nXP Math: {joueur["Math"]["xp_Math"]}; Level Math: {joueur["Math"]["Level_Math"]}; Exercise Math: {joueur["Math"]["parties_jouees_Math"]}")
+    print("-" * 40)
+    score = 0
+    xp = 0
+    streak = False
+    choix = random.choice(i)
+    if choix == "base":
+        question, reponse_correct = math_base()
+        reponse = input(question)
+        score, xp, streak = control(score, xp, streak, reponse, reponse_correct, 5)
+    return score, xp, streak
     return score, xp, streak
 
 
@@ -59,7 +75,7 @@ def Francais(i, ndq):
         question = random.choice(list(francais_voc.items()))
         mot, traduction = question
         reponse = input(f"Comment dit-on '{mot}' en Francais?\nEntrer votre réponse: ").strip().capitalize()
-    streak, xp, score = correction(reponse, traduction, streak, xp, score)
+    score, xp, streak = control(score, xp, streak, reponse, traduction, 5)
     return score, xp, streak
 
 
@@ -78,10 +94,12 @@ def Deutsch(i, ndq):
             print("✅ Correct !")
             score += 1
             xp += 25
+            streak = True
         elif reponse == "?":
             print(merkmale_von_Kurzgeschichten)
         else:
             xp -= 25
+            streak = False
             print("❌ Mauvais ! Réessaye.")
     elif choix == "Merkmale von Kurzgeschichten (Schwer)":
         reponse_finale = []
@@ -96,19 +114,13 @@ def Deutsch(i, ndq):
                 streak = True
                 break
             reponse = input(f"Was sind die Merkmale von Kurzgeschichten?\nRéponses trouvées : {reponse_finale}\nEntrer votre réponse (ou '?' pour abandonner) : ")
-            if reponse == "?":
-                print(merkmale_von_Kurzgeschichten)
-                print(reponse_finale)
-                streak = True
-                break
-            elif reponse in merkmale_von_Kurzgeschichten and reponse not in reponse_finale:
+            if reponse in merkmale_von_Kurzgeschichten:
                 reponse_finale.append(reponse)
-                score += 1
-                xp += 100
-                print("✅ Correct !")
+                print("✅ Ajouté !")
+            elif reponse == "?":
+                break
             else:
-                xp -= 50
-                print("❌ Mauvais ! Réessaye.")
+                print("❌ Pas trouvé.")
             input("Appuyez sur Entrée pour continuer...")
     return score, xp, streak
 
@@ -122,54 +134,48 @@ def limiter_elements(elements_dict, niveau):
     max_elements = limites[min(niveau, len(limites) - 1)]
     return dict(islice(elements_dict.items(), max_elements))
 def ScNat(i, ndq):
-    while True:
-        score = 0
-        xp = 0
-        streak = False
-        choix = random.choice(i)
-        print(f"{ndq}) ScNat\nXP ScNat: {joueur["ScNat"]["xp_ScNat"]}; Level ScNat: {joueur["ScNat"]["Level_ScNat"]}; Exercise ScNat: {joueur["ScNat"]["parties_jouees_ScNat"]}")
-        print("-" * 40)
-        if choix == "element":
-            element_subset = limiter_elements(elements, joueur["ScNat"]["Level_ScNat"])
-            question = random.choice(list(element_subset.items()))
-            symbole, reponse_correct = question
-            reponse = input(f"Wie heißt das Element mit dem Symbol '{symbole}'?\n> ").strip().capitalize()
-        elif choix == "ordnungszahl":
-            element_subset = limiter_elements(ordnungszahl_von_elementen, joueur["ScNat"]["Level_ScNat"])
-            symbole, reponse_correct = random.choice(list(element_subset.items()))
-            reponse = input(f"Was ist das ordnungszahl von '{symbole}'?\n> ")
-        if reponse == "?":
-            print("REPONSE CORRECT: ", reponse_correct)
-            break
-        else:
-            if choix == "ordnungszahl":
-                try:
-                    reponse = int(reponse)
-                    if reponse == reponse_correct:
-                        print("✅ Correct !")
-                        score += 1
-                        xp += 50
-                        streak = True
-                        break
-                    else:
-                        print(f"❌ Mauvais ! C’était {reponse_correct}")
-                        xp -= 50
-                        streak = False
-                        break
-                except:
-                    print("=" * 40)
-                    print("NON VALIDER")
-            else:
+    score = 0
+    xp = 0
+    streak = False
+    choix = random.choice(i)
+    print(f"{ndq}) ScNat\nXP ScNat: {joueur["ScNat"]["xp_ScNat"]}; Level ScNat: {joueur["ScNat"]["Level_ScNat"]}; Exercise ScNat: {joueur["ScNat"]["parties_jouees_ScNat"]}")
+    print("-" * 40)
+    if choix == "element":
+        element_subset = limiter_elements(elements, joueur["ScNat"]["Level_ScNat"])
+        question = random.choice(list(element_subset.items()))
+        symbole, reponse_correct = question
+        reponse = input(f"Wie heißt das Element mit dem Symbol '{symbole}'?\n> ").strip().capitalize()
+    elif choix == "ordnungszahl":
+        element_subset = limiter_elements(ordnungszahl_von_elementen, joueur["ScNat"]["Level_ScNat"])
+        symbole, reponse_correct = random.choice(list(element_subset.items()))
+        reponse = input(f"Was ist das ordnungszahl von '{symbole}'?\n> ")
+    if reponse == "?":
+        print("REPONSE CORRECT: ", reponse_correct)
+    else:
+        if choix == "ordnungszahl":
+            try:
+                reponse = int(reponse)
                 if reponse == reponse_correct:
                     print("✅ Correct !")
                     score += 1
                     xp += 50
                     streak = True
-                    break
                 else:
                     print(f"❌ Mauvais ! C’était {reponse_correct}")
+                    xp -= 50
                     streak = False
-                    break
+            except:
+                print("=" * 40)
+                print("NON VALIDER")
+        else:
+            if reponse == reponse_correct:
+                print("✅ Correct !")
+                score += 1
+                xp += 50
+                streak = True
+            else:
+                print(f"❌ Mauvais ! C’était {reponse_correct}")
+                streak = False
     return score, xp, streak
 
 
@@ -196,11 +202,11 @@ def Anglais(i, ndq):
     # Utilise seulement les N dictionnaires de vocabulaire jusqu'au niveau actuel
     # Par exemple : Level 0 -> 1 dictionnaire; Level 1 -> 2 dictionnaires
     # Le niveau est limité au nombre de dictionnaires disponibles
-    Anglais_voc = Anglais_voc[:min(niveau + 1, len(Anglais_voc))]
+    Anglais_voc_filtered = Anglais_voc[:min(niveau + 1, len(Anglais_voc))]
 
-    if not Anglais_voc:
+    if not Anglais_voc_filtered:
         # Cas d'erreur si le niveau est trop haut ou pas de voc
-        Anglais_voc = [Anglais_voc1_famille] 
+        Anglais_voc_filtered = [Anglais_voc1_famille]
 
     print(f"{ndq}) Anglais\nXP Anglais: {joueur["Anglais"]["xp_Anglais"]}; Level Anglais: {joueur["Anglais"]["Level_Anglais"]}; Exercise Anglais: {joueur["Anglais"]["parties_jouees_Anglais"]}")
     print("-" * 40)
@@ -209,10 +215,10 @@ def Anglais(i, ndq):
     streak = False
     choix = random.choice(i)
     if choix == "voc easy":
-        question = random.choice(list(random.choice(Anglais_voc).items()))
-        mauvaise_repose_1 = random.choice(list(random.choice(Anglais_voc).keys()))
-        mauvaise_repose_2 = random.choice(list(random.choice(Anglais_voc).keys()))
-        mauvaise_repose_3 = random.choice(list(random.choice(Anglais_voc).keys()))
+        question = random.choice(list(random.choice(Anglais_voc_filtered).items()))
+        mauvaise_repose_1 = random.choice(list(random.choice(Anglais_voc_filtered).keys()))
+        mauvaise_repose_2 = random.choice(list(random.choice(Anglais_voc_filtered).keys()))
+        mauvaise_repose_3 = random.choice(list(random.choice(Anglais_voc_filtered).keys()))
         traduction, mot = question
         valeur = [traduction, mauvaise_repose_1, mauvaise_repose_2, mauvaise_repose_3]
         random.shuffle(valeur)
@@ -221,23 +227,12 @@ def Anglais(i, ndq):
         C = valeur[2]
         D = valeur[3]
         reponse = input(f"Chose the correct translation for '{mot}':\nA. {A}\nB. {B}\nC. {C}\nD. {D}\nEnter your answer (A-D): ").strip().upper()
-        if (reponse == "A" and A == traduction) or (reponse == "B" and B == traduction) or (reponse == "C" and C == traduction) or (reponse == "D" and D == traduction):
-            print("✅ Correct !")
-            score += 1
-            xp += 25
-            streak = True
-        elif reponse == "?":
-            print(f"C’était {traduction}")
-            streak = True
-        else:
-            print(f"❌ Mauvais ! C’était {traduction}")
-            xp -= 25
-            streak = False
-    elif choix == "voc difficile":
-        question = random.choice(list(random.choice(Anglais_voc).items()))
+        score, xp, streak = control(score, xp, streak, reponse, traduction, 5)
+    elif choix == "voc impossible":
+        question = random.choice(list(random.choice(Anglais_voc_filtered).items()))
         mot, traduction = question
         reponse = input(f"Written '{mot}' in English?\nEnter your answer:    ")
-        streak, xp, score = correction(reponse, traduction, streak, xp, score)
+        score, xp, streak = control(score, xp, streak, reponse, traduction, 5)
     #elif choix == "verb":
     #    pass
     return score, xp, streak

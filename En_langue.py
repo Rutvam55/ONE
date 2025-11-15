@@ -49,12 +49,12 @@ def langue(
         "main.8.p": "    1.1. Name der elemente ({scnat_11})"
     }
 
-    langue_actuelle = joueur["Parametre"]["langue"]
-    if langue_actuelle == "Englich":
+    langue_actuelle = joueur["P"]["langue"]
+    if langue_actuelle == "En":
         La = EN
     elif langue_actuelle == "Francais":
         La = FR
-    elif joueur["P"]["langue"] == "DE":
+    elif langue_actuelle == "DE":
         La = DE
 
     # Formatage final

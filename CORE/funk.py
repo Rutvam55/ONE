@@ -1,10 +1,25 @@
 import json
 import os
 
+def controller_int(ndc, ndc_max, nombre, raison):
+    while nombre > 0 and raison == "Combien de questions voulez-vous? ":
+        for i in range(ndc):
+            try:
+                nombre = int(input(raison + "\n> "))
+                break
+            except ValueError:
+                print(f"Entrée invalide. Retour au menu principal. ({ndc}/{ndc_max})")
+                input("ENTER pour continuer...")
+                ndc -= 1
+    try:
+        return nombre
+    except UnboundLocalError:
+        return 0
+
 def charger_sauvegarde():
     """Charge la sauvegarde si elle existe, sinon crée des données par défaut."""
-    if os.path.exists("sauvegarde.json"):
-        with open("sauvegarde.json", "r", encoding="utf-8") as fichier:
+    if os.path.exists("DATA/sauvegarde.json"):
+        with open("DATA/sauvegarde.json", "r", encoding="utf-8") as fichier:
             try:
                 donnees = json.load(fichier)
                 # Migration: supporter l'ancien format plat vers le format imbriqué
@@ -138,15 +153,29 @@ def Level_up(joueur):
         print(f"🎉 Level up Math -> {joueur['Math']['Level_Math']}")
 
 def selectionner_joueur(donnees, nom, mot_de_passe):
-    """Vérifie si le joueur existe et si le mot de passe est correct."""
+    """
+    Vérifie si le joueur existe et si le mot de passe est correct.
+    Retourne toujours (joueur, mot_correct)
+    joueur = dict ou None
+    mot_correct = True / False
+    """
+    
+    # Joueur n'existe pas
     if nom not in donnees["joueurs"]:
         print("Joueur introuvable.")
-        return None
+        return None, False
+
     joueur = donnees["joueurs"][nom]
+
+    # Problème de données
     if "mot_de_passe" not in joueur:
         print("Données du joueur corrompues.")
-        return None
+        return None, False
+
+    # Mot de passe incorrect
     if joueur["mot_de_passe"] != mot_de_passe:
         print("Mot de passe incorrect.")
-        return None
-    return joueur
+        return None, False
+
+    # Succès
+    return joueur, True

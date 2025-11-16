@@ -46,8 +46,8 @@ def control(score, xp, streak, reponse, reponse_correct, max):
 
 
 # Math
-from MATIERE.math import math_base
-def Math(i, ndq):
+from MATIERE.MATH.math import math_base
+def Math(i, ndq, L):
     print(f"{ndq}) Math\nXP Math: {joueur["Math"]["xp_Math"]}; Level Math: {joueur["Math"]["Level_Math"]}; Exercise Math: {joueur["Math"]["parties_jouees_Math"]}")
     print("-" * 40)
     score = 0
@@ -63,8 +63,8 @@ def Math(i, ndq):
 
 
 # Francais
-from MATIERE.francais import francais_voc
-def Francais(i, ndq):
+from MATIERE.LANGUE.francais import francais_voc
+def Francais(i, ndq, L):
     choix = random.choice(i)
     print(f"{ndq}) Francais\nXP Francais: {joueur["Francais"]["xp_Francais"]}; Level Francais: {joueur["Francais"]["Level_Francais"]}; Exercise Francais: {joueur["Francais"]["parties_jouees_Francais"]}")
     print("-" * 40)
@@ -80,8 +80,8 @@ def Francais(i, ndq):
 
 
 # Deutsch
-from MATIERE.deutsch import merkmale_von_Kurzgeschichten
-def Deutsch(i, ndq):
+from MATIERE.LANGUE.deutsch import merkmale_von_Kurzgeschichten
+def Deutsch(i, ndq, L):
     score = 0
     xp = 0
     streak = False
@@ -126,14 +126,14 @@ def Deutsch(i, ndq):
 
 
 # ScNat
-from MATIERE.scnat import elements
-from MATIERE.scnat import ordnungszahl_von_elementen
+from MATIERE.SCNAT.scnat import elements
+from MATIERE.SCNAT.scnat import ordnungszahl_von_elementen
 def limiter_elements(elements_dict, niveau):
     """Retourne un dictionnaire limité en fonction du niveau."""
     limites = [5, 10, 15, 20, 25, 30, 35]
     max_elements = limites[min(niveau, len(limites) - 1)]
     return dict(islice(elements_dict.items(), max_elements))
-def ScNat(i, ndq):
+def ScNat(i, ndq, L):
     score = 0
     xp = 0
     streak = False
@@ -180,8 +180,8 @@ def ScNat(i, ndq):
 
 
 # Anglais
-from MATIERE.anglais import Anglais_voc1_famille, Anglais_voc2_school, Anglais_voc3_loisire, Anglais_voc4_natur, Anglais_voc5_nourriture, Anglais_voc6_vetement, Anglais_voc7_technologie, Anglais_voc8_lieux, Anglais_voc9_corps_sante_menage, Anglais_voc10_vie_metiers_voyages, Anglais_voc11
-def Anglais(i, ndq):
+from MATIERE.LANGUE.anglais import Anglais_voc1_famille, Anglais_voc2_school, Anglais_voc3_loisire, Anglais_voc4_natur, Anglais_voc5_nourriture, Anglais_voc6_vetement, Anglais_voc7_technologie, Anglais_voc8_lieux, Anglais_voc9_corps_sante_menage, Anglais_voc10_vie_metiers_voyages, Anglais_voc11
+def Anglais(i, ndq, L):
     Anglais_voc = [
         Anglais_voc1_famille,
         Anglais_voc2_school,

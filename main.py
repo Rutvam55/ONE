@@ -1,39 +1,129 @@
 import random
 import os
+import pwinput
+
 from itertools import islice
-from link import set_joueur, Math, Anglais, ScNat, Francais, Deutsch
-from funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur
-from En_langue import langue
+from CORE.link import set_joueur, Math, Anglais, ScNat, Francais, Deutsch
+from CORE.funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur, controller_int
+from CORE.langue import langue
 
 v = "0.8.0"
 
 def calcule_pourcentage(nombre, nombre_total):
-    return (nombre / nombre_total) * 100
+    return (nombre / nombre_total) * 100 if nombre_total > 0 else 0
+
+# ===============================
+#       CLASSE BOUTTON
+# ===============================
+
+class Boutton:
+    def __init__(self):
+        self.state = {
+            "ScNat_1": False,
+            "ScNat_1_1": False,
+            "ScNat_1_2": False,
+
+            "Français_2": False,
+            "Français_2_1": False,
+
+            "Deutsch_3": False,
+            "Deutsch_3_1": False,
+            "Deutsch_3_2": True,
+
+            "Anglais_4": False,
+            "Anglais_4_1": False,
+            "Anglais_4_2": False,
+
+            "Math_5": False,
+            "Math_5_1": False
+        }
+
+    def toggle(self, name):
+        if name in self.state:
+            self.state[name] = not self.state[name]
+        else:
+            print(f"[ERREUR] '{name}' n'existe pas.")
+
+    def collect(self):
+        menu = []
+        i_ScNat = []
+        i_Francais = []
+        i_Deutsch = []
+        i_Anglais = []
+        i_Math = []
+        # ---------------- SC NAT ----------------
+        if self.state["ScNat_1"]:
+            menu.append("ScNat")
+            if self.state["ScNat_1_1"]:
+                i_ScNat.append("element")
+            if self.state["ScNat_1_2"]:
+                i_ScNat.append("ordnungszahl")
+
+        # ---------------- FRANÇAIS ----------------
+        if self.state["Français_2"]:
+            menu.append("Francais")
+            if self.state["Français_2_1"]:
+                i_Francais.append("voc dif")
+
+        # ---------------- DEUTSCH ----------------
+        if self.state["Deutsch_3"]:
+            menu.append("Deutsch")
+            if self.state["Deutsch_3_1"]:
+                i_Deutsch.append("einfach")
+            if self.state["Deutsch_3_2"]:
+                i_Deutsch.append("schwer")
+
+        # ---------------- ANGLAIS ----------------
+        if self.state["Anglais_4"]:
+            menu.append("Anglais")
+            if self.state["Anglais_4_1"]:
+                i_Anglais.append("easy")
+            if self.state["Anglais_4_2"]:
+                i_Anglais.append("impossible")
+
+        # ---------------- MATH ----------------
+        if self.state["Math_5"]:
+            menu.append("Math")
+            if self.state["Math_5_1"]:
+                i_Math.append("base")
+        
+        return menu, i_ScNat, i_Francais, i_Deutsch, i_Anglais, i_Math
 
 
-# bouton
-boutton_ScNat, boutton_ScNat_i_elementen_namen, boutton_ScNat_i_elementen_ordnungszahl = False
-boutton_Français, boutton_Français_i_diffi = False
-boutton_Deutsch, boutton_Deutsch_i_merkmale_von_Kurzgeschichten, boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle = True
-boutton_Anglais, boutton_Anglais_i_voc_easy, boutton_Anglais_i_voc_impossible = False
-boutton_Math, boutton_Math_i_base = False
+# ===============================
+#       PROGRAMME PRINCIPAL
+# ===============================
 
-# Menu principal
-menu = []
+boutons = Boutton()
 running = True
 connection = False
+
 while running:
+
     donnees = charger_sauvegarde()
+
+    # =================================
+    #  CONNEXION
+    # =================================
     while not connection:
         print("=== ONE ===")
-        nom = input("Enter your name: ")
-        mot_de_passe = input("Enter your password: ")
-        joueur = selectionner_joueur(donnees, nom, mot_de_passe)
+        mot_de_passe_entrer = False
+        ndc = 3
+        
+
+        if ndc == 0 and mot_de_passe_entrer is False:
+            print("Too many incorrect attempts. Exiting.")
+            exit()
+
+        nom = input("Enter your name.\n> ")
+        mdp = pwinput.pwinput(prompt = "Enter your password.\n> ", mask = '#')
+        joueur, mot_de_passe_entrer = selectionner_joueur(donnees, nom, mdp)
+
         if joueur is None:
-            creer = input("Player not found. Do you want to creat a Player? (y/n) ")
+            creer = input("Player not found. Create one? (o/n) ")
+
             if creer.lower() == "o":
-                if ajouter_joueur(donnees, nom, mot_de_passe):
-                    print("PLAYER CREATED")
+                if ajouter_joueur(donnees, nom, mdp):
                     joueur = donnees["joueurs"][nom]
                     sauvegarder_auto(donnees)
                 else:
@@ -41,235 +131,166 @@ while running:
                     continue
             else:
                 exit()
+
+        while mot_de_passe_entrer is False and ndc > 0:
+            nom = input("Enter your name.\n> ")
+            mdp = pwinput.pwinput(prompt = "Enter your password.\n> ", mask = '#')
+            joueur, mot_de_passe_entrer = selectionner_joueur(donnees, nom, mdp)
+            if mot_de_passe_entrer is True:
+                break
+            ndc -= 1
+            print(f"Password: {mdp}\nAttempts remaining: {ndc}/3")
+            if ndc == 0 and mot_de_passe_entrer is False:
+                print("Too many incorrect attempts. Exiting.")
+                exit()
+
         connection = True
         set_joueur(joueur)
 
-    # configuration des boutons
-    choix = None
-    L = langue(
-        nom,
-        joueur,
-        v,
-        boutton_ScNat,boutton_ScNat_i_elementen_namen, boutton_ScNat_i_elementen_ordnungszahl,
-        boutton_Français, boutton_Français_i_diffi,
-        boutton_Deutsch, boutton_Deutsch_i_merkmale_von_Kurzgeschichten, boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle,
-        boutton_Anglais, boutton_Anglais_i_voc_easy, boutton_Anglais_i_voc_impossible,
-        boutton_Math, boutton_Math_i_base
-        )
+    # ===============================
+    #       LANGUE
+    # ===============================
+    L = langue(nom, joueur, v, boutons.state)
+
+    # ===============================
+    #       MENU PRINCIPAL
+    # ===============================
     while True:
+
         print(L["main.1.p"])
-        choix = input(L["main.2.i"])
+        choix = input(L["main.2.i"]).strip()
+
+        # =======================================
+        #                PARAMÈTRES
+        # =======================================
         if choix == "1":
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print("-" * 40)
-            if boutton_ScNat == True:
-                print(L["main.7.p"])
-                print(L["main.8.p"])
-                print("    1.2. Ordnungszahl der elemente (ON)")
-            elif boutton_ScNat == False:
-                print(f"1. ScNat (OFF)")
 
-            if boutton_Français == True:
-                print(f"2. Francais (ON)")
-                if boutton_Français_i_diffi == True:
-                    print("    2.1. vocabulair (niv: diffi) (ON)")
+            while True:
+                os.system("cls" if os.name == "nt" else "clear")
+                print("=========== PARAMÈTRES ===========")
+
+                def show(btn, txt):
+                    etat = "ON" if boutons.state[btn] else "OFF"
+                    print(f"{txt} ({etat})")
+
+                show("ScNat_1", "1. ScNat")
+                show("ScNat_1_1", "  1.1 Element Namen")
+                show("ScNat_1_2", "  1.2 Ordnungszahl")
+
+                show("Français_2", "2. Français")
+                show("Français_2_1", "  2.1 Voc. difficile")
+
+                show("Deutsch_3", "3. Deutsch")
+                show("Deutsch_3_1", "  3.1 Kurzgeschichten (einfach)")
+                show("Deutsch_3_2", "  3.2 Kurzgeschichten (schwer)")
+
+                show("Anglais_4", "4. Anglais")
+                show("Anglais_4_1", "  4.1 Easy voc")
+                show("Anglais_4_2", "  4.2 Impossible voc")
+
+                show("Math_5", "5. Math")
+                show("Math_5_1", "  5.1 Base")
+
+                print("\nENTER to valider, ou choisir un bouton.")
+
+                action = input("> ").strip()
+
+                mapping = {
+                    "1": "ScNat_1",
+                    "1.1": "ScNat_1_1",
+                    "1.2": "ScNat_1_2",
+
+                    "2": "Français_2",
+                    "2.1": "Français_2_1",
+
+                    "3": "Deutsch_3",
+                    "3.1": "Deutsch_3_1",
+                    "3.2": "Deutsch_3_2",
+
+                    "4": "Anglais_4",
+                    "4.1": "Anglais_4_1",
+                    "4.2": "Anglais_4_2",
+
+                    "5": "Math_5",
+                    "5.1": "Math_5_1"
+                }
+
+                if action in mapping:
+                    boutons.toggle(mapping[action])
+                elif action == "":
+                    break
                 else:
-                    print("    2.1. vocabulair (niv: diffi) (OFF)")
+                    print("Choix invalide.")
+                    input("ENTER pour continuer...")
+            
+            # =======================================
+            #           LANCER LES JEUX
+            # =======================================
+            menu, i_ScNat, i_Francais, i_Deutsch, i_Anglais, i_Math = boutons.collect()
+            if not menu:
+                print("Aucun jeu sélectionné dans les paramètres.")
+                input("ENTER pour continuer...")
+                continue
             else:
-                print(f"2. Francais (OFF)")
-
-            if boutton_Deutsch == True:
-                print(f"3. Deutsch (ON)")
-                if boutton_Deutsch_i_merkmale_von_Kurzgeschichten == True:
-                    print("    3.1. Merkmale von Kurzgeschichten (einfach) (ON)")
-                else:
-                    print("    3.1. Merkmale von Kurzgeschichten (einfach) (OFF)")
-                if boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle == True:
-                    print("    3.2. Merkmale von Kurzgeschichten (Schwer) (ON)")
-                else:
-                    print("    3.2. Merkmale von Kurzgeschichten (Schwer) (OFF)")
-            elif boutton_Deutsch == False:
-                print(f"3. Deutsch (OFF)")
-
-            if boutton_Anglais == True:
-                print(f"4. Anglais (ON)")
-                if boutton_Anglais_i_voc_easy == True:
-                    print("    4.1. Easy voc (ON)")
-                else:
-                    print("    4.1. Easy voc (OFF)")
-                if boutton_Anglais_i_voc_impossible == True:
-                    print("    4.2. Impossible voc (ON)")
-                else:
-                    print("    4.2. Impossible voc (OFF)")
-            elif boutton_Anglais == False:
-                print(f"4. Anglais (OFF)")
-
-            if boutton_Math == True:
-                print(f"5. Math (ON)")
-                if boutton_Math_i_base == True:
-                    print("    5.1. Base math (ON)")
-                else:
-                    print("    5.1. Base math (OFF)")
-            else:
-                print(f"5. Math (OFF)\n")
-            print("-" * 40)
-            print(L["main.4.p"])
-            choix = input(L["main.5.i"]).strip()
-            if choix == "1":
-                boutton_ScNat = not boutton_ScNat
-            elif choix == "1.1":
-                boutton_ScNat_i_elementen_namen = not boutton_ScNat_i_elementen_namen
-            elif choix == "1.2":
-                boutton_ScNat_i_elementen_ordnungszahl = not boutton_ScNat_i_elementen_ordnungszahl
-            elif choix == "2":
-                boutton_Français = not boutton_Français
-            elif choix == "2.1":
-                boutton_Français_i_diffi = not boutton_Français_i_diffi
-            elif choix == "3":
-                boutton_Deutsch = not boutton_Deutsch
-            elif choix == "3.1":
-                boutton_Deutsch_i_merkmale_von_Kurzgeschichten = not boutton_Deutsch_i_merkmale_von_Kurzgeschichten
-            elif choix == "3.2":
-                boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle = not boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle
-            elif choix == "4":
-                boutton_Anglais = not boutton_Anglais
-            elif choix == "4.1":
-                boutton_Anglais_i_voc_easy = not boutton_Anglais_i_voc_easy
-            elif choix == "4.2":
-                boutton_Anglais_i_voc_impossible = not boutton_Anglais_i_voc_impossible
-            elif choix == "5":
-                boutton_Math = not boutton_Math
-            elif choix == "5.1":
-                boutton_Math_i_base = not boutton_Math_i_base
-            elif choix == "":
-                menu = []
-                i_Francais = []
-                i_Math = []
-                i_Deutsch = []
-                i_Anglais = []
-                i_ScNat = []
-                if boutton_ScNat:
-                    menu.append(ScNat)
-                    if boutton_ScNat_i_elementen_namen:
-                        i_ScNat.append("element")
-                    if boutton_ScNat_i_elementen_ordnungszahl:
-                        i_ScNat.append("ordnungszahl")
-                if boutton_Français:
-                    menu.append(Francais)
-                    if boutton_Français_i_diffi:
-                        i_Francais.append("voc dif")
-                if boutton_Deutsch:
-                    menu.append(Deutsch)
-                    if boutton_Deutsch_i_merkmale_von_Kurzgeschichten:
-                        i_Deutsch.append("Merkmale von Kurzgeschichten (Einfach)")
-                    if boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle:
-                        i_Deutsch.append("Merkmale von Kurzgeschichten (Schwer)")
-                if boutton_Anglais:
-                    menu.append(Anglais)
-                    if boutton_Anglais_i_voc_easy:
-                        i_Anglais.append("voc easy")
-                    if boutton_Anglais_i_voc_impossible:
-                        i_Anglais.append("voc difficile")
-                if boutton_Math:
-                    menu.append(Math)
-                    if boutton_Math_i_base:
-                        i_Math.append("base")
-                if not menu:
-                    print(L["main.6.p"])
-                    input("Appuyez sur Entrée pour continuer...")
-                    continue
-                break
-            else:
-                print("Choix invalide.")
-                input("Appuyez sur Entrée pour continuer...")
-
-            os.system('cls' if os.name == 'nt' else 'clear')
-            choix = input("Tu veux faire un quiz avec quel mode ?\n1. infinie\n2. normal\nQ. Exit\nEntrer votre réponse: ").strip().lower()
-            if choix == "1":
-                streak = True
-                ndq = 1
-                while streak:
+                choix_mode = input("Choisir le mode\n1: Infini\n2: Normal\n> ").strip().lower()
+                if choix_mode in ["1", "infini"]:
                     os.system('cls' if os.name == 'nt' else 'clear')
-                    if not menu:
-                        print("Erreur : aucun mode disponible.")
-                        break
-                fonction = random.choice(menu)
-                if fonction is ScNat:
-                    score, xp_gagne, streak = fonction(i_ScNat, ndq)
-                    joueur["ScNat"]["parties_jouees_ScNat"] += 1
-                    joueur["ScNat"]["xp_ScNat"] += xp_gagne
-                    print("\nScNat\nXP ScNat: ", joueur["ScNat"]["xp_ScNat"], "; Level ScNat: ", joueur["ScNat"]["Level_ScNat"], "; Exercise ScNat: ", joueur["ScNat"]["parties_jouees_ScNat"])
-                elif fonction is Deutsch:
-                    score, xp_gagne, streak = fonction(i_Deutsch, ndq)
-                    joueur["Deutsch"]["parties_jouees_Deutsch"] += 1
-                    joueur["Deutsch"]["xp_Deutsch"] += xp_gagne
-                    print("\nDeutsch\nXP Deutsch: ", joueur["Deutsch"]["xp_Deutsch"], "; Level Deutsch: ", joueur["Deutsch"]["Level_Deutsch"], "; Exercise Deutsch: ", joueur["Deutsch"]["parties_jouees_Deutsch"])
-                elif fonction is Francais:
-                    score, xp_gagne, streak = fonction(i_Francais, ndq)
-                    joueur["Francais"]["parties_jouees_Francais"] += 1
-                    joueur["Francais"]["xp_Francais"] += xp_gagne
-                    print("\nFrancais\nXP Francais: ", joueur["Francais"]["xp_Francais"], "; Level Francais: ", joueur["Francais"]["Level_Francais"], "; Exercise Francais: ", joueur["Francais"]["parties_jouees_Francais"])
-                elif fonction is Anglais:
-                    score, xp_gagne, streak = fonction(i_Anglais, ndq)
-                    joueur["Anglais"]["parties_jouees_Anglais"] += 1
-                    joueur["Anglais"]["xp_Anglais"] += xp_gagne
-                    print("\nAnglais\nXP Anglais: ", joueur["Anglais"]["xp_Anglais"], "; Level Anglais: ", joueur["Anglais"]["Level_Anglais"], "; Exercise Anglais: ", joueur["Anglais"]["parties_jouees_Anglais"])
-                elif fonction is Math:
-                    score, xp_gagne, streak = fonction(i_Math, ndq)
-                    joueur["Math"]["parties_jouees_Math"] += 1
-                    joueur["Math"]["xp_Math"] += xp_gagne
-                    print("\nMath\nXP Math: ", joueur["Math"]["xp_Math"], "; Level Math: ", joueur["Math"]["Level_Math"], "; Exercise Math: ", joueur["Math"]["parties_jouees_Math"])
-                Level_up(joueur)
-                sauvegarder_auto(donnees)
-                input("Appuyez sur Entrée pour continuer...")
-                ndq += 1
-
-
-            elif choix == "2":
-                if not menu:
-                    print("Erreur : aucun mode sélectionné.")
-                    input("Appuyez sur Entrée pour continuer...")
-                else:
-                    try:
-                        n = int(input("Combien de questions ? "))
-                    except ValueError:
-                        print("Nombre invalide.")
-                        continue
-                    ndq = n
-                    for _ in range(n):
-                        os.system('cls' if os.name == 'nt' else 'clear')
-                        fonction = random.choice(menu)
-                        if fonction is ScNat:
-                            score, xp_gagne, streak = fonction(i_ScNat, ndq)
-                            joueur["ScNat"]["parties_jouees_ScNat"] += 1
-                            joueur["ScNat"]["xp_ScNat"] += xp_gagne
-                        elif fonction is Deutsch:
-                            score, xp_gagne, streak = fonction(i_Deutsch, ndq)
-                            joueur["Deutsch"]["parties_jouees_Deutsch"] += 1
-                            joueur["Deutsch"]["xp_Deutsch"] += xp_gagne
-                        elif fonction is Francais:
-                            score, xp_gagne, streak = fonction(i_Francais, ndq)
-                            joueur["Francais"]["parties_jouees_Francais"] += 1
-                            joueur["Francais"]["xp_Francais"] += xp_gagne
-                        elif fonction is Anglais:
-                            score, xp_gagne, streak = fonction(i_Anglais, ndq)
-                            joueur["Anglais"]["parties_jouees_Anglais"] += 1
-                            joueur["Anglais"]["xp_Anglais"] += xp_gagne
-                        elif fonction is Math:
-                            score, xp_gagne, streak = fonction(i_Math, ndq)
-                            joueur["Math"]["parties_jouees_Math"] += 1
-                            joueur["Math"]["xp_Math"] += xp_gagne
+                    Streak = True
+                    ndq = 0
+                    while Streak:
+                        ndq += 1
+                        jeu_choisi = random.choice(menu)
+                        if jeu_choisi == "ScNat":
+                            ScNat(i_ScNat, ndq, L)
+                        elif jeu_choisi == "Francais":
+                            Francais(i_Francais, ndq, L)
+                        elif jeu_choisi == "Deutsch":
+                            Deutsch(i_Deutsch, ndq, L)
+                        elif jeu_choisi == "Anglais":
+                            Anglais(i_Anglais, ndq, L)
+                        elif jeu_choisi == "Math":
+                            Math(i_Math, ndq, L)
+                        else:
+                            print("Erreur de sélection du jeu.")
+                            Streak = False
                         Level_up(joueur)
                         sauvegarder_auto(donnees)
-                        input("Appuyez sur Entrée pour continuer...")
-                        ndq -= 1
-                    print(f"Score: {score}\nPourcentage: {calcule_pourcentage(score, n)}")
-                    input("Appuyez sur Entrée pour continuer...")
-        elif choix == "S" or choix == "P":
-            choix = input(L["main.3.i"])
-        elif choix == "q":
+                elif choix_mode in ["2", "normal"]:
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    Streak = True
+                    ndc = 5
+                    ndc_max = ndc
+                    ndq = 0
+                    ndq = controller_int(ndc, ndc_max, ndq, "Combien de questions voulez-vous?")
+                    ndqr = ndq
+                    for i in range(ndq):
+                        ndqr += 1
+                        jeu_choisi = random.choice(menu)
+                        if jeu_choisi == "ScNat":
+                            ScNat(i_ScNat, ndqr, L)
+                        elif jeu_choisi == "Francais":
+                            Francais(i_Francais, ndqr, L)
+                        elif jeu_choisi == "Deutsch":
+                            Deutsch(i_Deutsch, ndqr, L)
+                        elif jeu_choisi == "Anglais":
+                            Anglais(i_Anglais, ndqr, L)
+                        elif jeu_choisi == "Math":
+                            Math(i_Math, ndqr, L)
+                        else:
+                            print("Erreur de sélection du jeu.")
+                            Streak = False
+                        Level_up(joueur)
+                        sauvegarder_auto(donnees)
+
+
+        # =======================================
+        #             QUITTER LE JEU
+        # =======================================
+        elif choix.lower() == "q":
             print("Au revoir !")
+            running = False
             break
+
         else:
             print("Choix invalide.")
-            input("Appuyez sur Entrée pour continuer...")
+            input("ENTER pour continuer...")

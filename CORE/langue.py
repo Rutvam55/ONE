@@ -1,21 +1,8 @@
-def langue(
-        nom,
-        joueur,
-        v, 
-        boutton_ScNat_1,
-        boutton_ScNat_11,
-        boutton_ScNat_12,
-        boutton_Français_2,
-        boutton_Français_21,
-        boutton_Deutsch_3, 
-        boutton_Deutsch_31,
-        boutton_Deutsch_32,
-        boutton_Anglais_4,
-        boutton_Anglais_41,
-        boutton_Anglais_42,
-        boutton_Math_5, 
-        boutton_Math_51
-        ):
+def langue(nom, joueur, v, boutton_state):
+
+    scnat = boutton_state["ScNat_1"]
+    scnat_1 = boutton_state["ScNat_1_1"]
+
     FR = {
         "main.1.p": "Bienvenue, {name} !\nTu veux faire quoi?",
         "main.2.i": "1. Entrainemant\nP. Parametre",
@@ -62,6 +49,6 @@ def langue(
         name = nom if nom else "Invité",
         langue = joueur["P"]["langue"],
         v = v,
-        scnat = "ON" if boutton_ScNat_1 else "OFF",
-        scnat_11 = "ON" if boutton_ScNat_11 else "OFF"
+        scnat = "ON" if scnat else "OFF",
+        scnat_11 = "ON" if scnat_1 else "OFF"
     ) for k, v in La.items()}

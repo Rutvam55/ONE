@@ -36,6 +36,43 @@
             "P": {
                 "langue": "En"
             }
+        },
+        "Lo123": {
+            "mot_de_passe": "Lo123",
+            "best_score": 0,
+            "Francais": {
+                "parties_jouees_Francais": 0,
+                "Level_Francais": 0,
+                "xp_Francais": 0,
+                "Max_xp_Francais": 1000
+            },
+            "Deutsch": {
+                "parties_jouees_Deutsch": 0,
+                "Level_Deutsch": 0,
+                "xp_Deutsch": 0,
+                "Max_xp_Deutsch": 1000
+            },
+            "ScNat": {
+                "parties_jouees_ScNat": 0,
+                "Level_ScNat": 0,
+                "xp_ScNat": 0,
+                "Max_xp_ScNat": 1000
+            },
+            "Anglais": {
+                "parties_jouees_Anglais": 0,
+                "Level_Anglais": 0,
+                "xp_Anglais": 0,
+                "Max_xp_Anglais": 1000
+            },
+            "Math": {
+                "parties_jouees_Math": 0,
+                "Level_Math": 0,
+                "xp_Math": 0,
+                "Max_xp_Math": 1000
+            },
+            "P": {
+                "langue": "En"
+            }
         }
     }
 }

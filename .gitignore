@@ -1,6 +1,3 @@
 # Fichiers Python à ignorer
 *.pyc
 __pycache__/
-
-# Fichier de données à ignorer
-sauvegarde.json

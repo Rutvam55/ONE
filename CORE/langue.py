@@ -37,12 +37,14 @@ def langue(nom, joueur, v, boutton_state):
     }
 
     langue_actuelle = joueur["P"]["langue"]
-    if langue_actuelle == "En":
+    if langue_actuelle == "EN":
         La = EN
-    elif langue_actuelle == "Francais":
+    elif langue_actuelle == "FR":
         La = FR
     elif langue_actuelle == "DE":
         La = DE
+    else:
+        La = FR  # Par défaut: Français
 
     # Formatage final
     return {k: v.format(

@@ -4,10 +4,10 @@ import pwinput
 
 from itertools import islice
 from CORE.link import set_joueur, Math, Anglais, ScNat, Francais, Deutsch
-from CORE.funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur, controller_int
+from KI.funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur, controller_int, DEFAULT_SAVE_FILE
 from CORE.langue import langue
 
-v = "0.8.0"
+v = "0.8.1"
 
 def calcule_pourcentage(nombre, nombre_total):
     return (nombre / nombre_total) * 100 if nombre_total > 0 else 0
@@ -100,12 +100,13 @@ connection = False
 
 while running:
 
-    donnees = charger_sauvegarde()
+    donnees = charger_sauvegarde(DEFAULT_SAVE_FILE)
 
     # =================================
     #  CONNEXION
     # =================================
     while not connection:
+        os.system("cls" if os.name == "nt" else "clear")
         print("=== ONE ===")
         mot_de_passe_entrer = False
         ndc = 3
@@ -125,24 +126,22 @@ while running:
             if creer.lower() == "o":
                 if ajouter_joueur(donnees, nom, mdp):
                     joueur = donnees["joueurs"][nom]
-                    sauvegarder_auto(donnees)
+                    sauvegarder_auto(donnees, DEFAULT_SAVE_FILE)
                 else:
                     print("ERROR")
                     continue
             else:
-                exit()
-
-        while mot_de_passe_entrer is False and ndc > 0:
-            nom = input("Enter your name.\n> ")
-            mdp = pwinput.pwinput(prompt = "Enter your password.\n> ", mask = '#')
-            joueur, mot_de_passe_entrer = selectionner_joueur(donnees, nom, mdp)
-            if mot_de_passe_entrer is True:
-                break
-            ndc -= 1
-            print(f"Password: {mdp}\nAttempts remaining: {ndc}/3")
-            if ndc == 0 and mot_de_passe_entrer is False:
-                print("Too many incorrect attempts. Exiting.")
-                exit()
+                while mot_de_passe_entrer is False and ndc > 0:
+                    nom = input("Enter your name.\n> ")
+                    mdp = pwinput.pwinput(prompt = "Enter your password.\n> ", mask = '#')
+                    joueur, mot_de_passe_entrer = selectionner_joueur(donnees, nom, mdp)
+                    if mot_de_passe_entrer is True:
+                        break
+                    ndc -= 1
+                    print(f"Password: {mdp}\nAttempts remaining: {ndc}/3")
+                if ndc == 0 and mot_de_passe_entrer is False:
+                    print("Too many incorrect attempts. Exiting.")
+                    exit()
 
         connection = True
         set_joueur(joueur)
@@ -151,6 +150,42 @@ while running:
     #       LANGUE
     # ===============================
     L = langue(nom, joueur, v, boutons.state)
+
+    # ===============================
+    #       Class Joueur
+    # ===============================
+    class Joueur:
+        def __init__(self, joueur):
+            self.nom = joueur["nom"]
+            self.mot_de_passe = joueur["mot_de_passe"]
+            
+            # ScNat
+            self.ScNat_Level = joueur["ScNat"]["Level_ScNat"]
+            self.ScNat_xp = joueur["ScNat"]["xp_ScNat"]
+            self.ScNat_Max_xp = joueur["ScNat"]["Max_xp_ScNat"]
+            
+            # Francais
+            self.Francais_Level = joueur["Francais"]["Level_Francais"]
+            self.Francais_xp = joueur["Francais"]["xp_Francais"]
+            self.Francais_Max_xp = joueur["Francais"]["Max_xp_Francais"]
+            
+            # Deutsch
+            self.Deutsch_Level = joueur["Deutsch"]["Level_Deutsch"]
+            self.Deutsch_xp = joueur["Deutsch"]["xp_Deutsch"]
+            self.Deutsch_Max_xp = joueur["Deutsch"]["Max_xp_Deutsch"]
+            
+            # Anglais
+            self.Anglais_Level = joueur["Anglais"]["Level_Anglais"]
+            self.Anglais_xp = joueur["Anglais"]["xp_Anglais"]
+            self.Anglais_Max_xp = joueur["Anglais"]["Max_xp_Anglais"]
+
+            # Math
+            self.Math_Level = joueur["Math"]["Level_Math"]
+            self.Math_xp = joueur["Math"]["xp_Math"]
+            self.Math_Max_xp = joueur["Math"]["Max_xp_Math"]
+            
+            #paramètre
+            self.langue = joueur["P"]["langue"]
 
     # ===============================
     #       MENU PRINCIPAL
@@ -280,8 +315,30 @@ while running:
                             print("Erreur de sélection du jeu.")
                             Streak = False
                         Level_up(joueur)
-                        sauvegarder_auto(donnees)
-
+                        sauvegarder_auto(donnees, DEFAULT_SAVE_FILE)
+        elif choix.lower() == "s" or choix.lower() == "p":
+            os.system("cls" if os.name == "nt" else "clear")
+            choix = input("Vous voulez faire quoi?\n1. Changer la langue\n> ").strip()
+            if choix == "1":
+                langue_choisie = input(
+                    f"Choisir la langue:\n"
+                    f"1. Français ({'ON' if joueur['P'].get('langue','FR') == 'FR' else 'OFF'})\n"
+                    f"2. English ({'ON' if joueur['P'].get('langue','FR') == 'EN' else 'OFF'})\n"
+                    f"3. Deutsch ({'ON' if joueur['P'].get('langue','FR') == 'DE' else 'OFF'})\n> "
+                ).strip()
+                try:
+                    if langue_choisie == "1":
+                        Joueur(joueur).langue = "FR"
+                    elif langue_choisie == "2":
+                        Joueur(joueur).langue = "EN"
+                    elif langue_choisie == "3":
+                        Joueur(joueur).langue = "DE"
+                    else:
+                        print("Choix invalide.")
+                except Exception as e:
+                    print(f"Erreur: {e}")    
+                input("ENTER pour continuer...")
+                sauvegarder_auto(donnees, DEFAULT_SAVE_FILE)
 
         # =======================================
         #             QUITTER LE JEU

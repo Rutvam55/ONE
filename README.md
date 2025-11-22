@@ -1,13 +1,12 @@
-# 🚀 ONE (Version 0.8.0 NEW)
+# 🚀 ONE (Version 0.8.0)
 
 ##Langue
 * FR = Français, Französisch
-* DE = Allemand, Deutsch
 
 ## FR
 ### L'outil d'apprentissage en terminal
 
-**ONE** est une application développée entièrement en **Python** pour le terminal (ligne de commande). Elle a été conçue pour aider les utilisateurs à réviser et à apprendre de nouvelles notions dans plusieurs matières de manière interactive.
+**ONE** est une application développée entièrement en **Python** pour le terminal (ligne de commande). Elle a été conçue pour aider les utilisateurs à réviser plusieurs matières de manière interactive.
 
 **(Note de l'auteur : Le nom "ONE" vient simplement du fait que je n'ai aucune idée de quel nom choisir ! 😉)**
 
@@ -48,25 +47,13 @@ python main.py
 * Rutvam55
 
 ### historique et nouveauté
-#### v0.8 (LUN 17/11/2025)
-* Paramètre (0.8.0)
-
-#### v0.7 (LUN 10/11/2025)
-* Correction des erreurs possible (v0.7.2)
-* plus de vocabulaire français (v0.7.1)
-* ajout de la section Math (v0.7.0)
-
-#### v0.6 (LUN 03/11/2025)
-* correction des erreur possible (v0.6.2)
-* plus de vocabulaire anglais (v0.6.1)
-* ajout de la section anglais (v0.6.0)
-
-### historique et nouveauté
-#### v_0.8.1 (01/12/2025)
-* vocabulaire francais sera plus developper
+#### v0.9 (LUN 08/12/2025)
+* LUN 08/12/2025: correction des erreur (0.9.0)
+    1. plus: meilleur securite
+    2. plus: ameloration du parametre
 
 #### v0.8 (LUN 17/11/2025)
-* Paramètre (0.8.0)
+* LUN 17/11/2025: Paramètre (0.8.0)
 
 #### v0.7 (LUN 10/11/2025)
 * Correction des erreurs possible (v0.7.2)
